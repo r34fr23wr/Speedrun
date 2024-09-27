@@ -5,9 +5,9 @@ namespace Source.Services.Score
     [System.Serializable]
     public class ScoreData
     {
-        public int Score { get; private set; }
+        public float Score { get; private set; }
 
-        public ScoreData(int score)
+        public ScoreData(float score)
         {
             Score = score;
         }

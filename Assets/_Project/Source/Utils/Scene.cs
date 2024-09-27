@@ -1,6 +1,7 @@
 public enum Scene
 {
     Boot = 0,
-    MainMenu = 1,
-    Gameplay = 2,
+    Loading = 1,
+    MainMenu = 2,
+    Gameplay = 3,
 }

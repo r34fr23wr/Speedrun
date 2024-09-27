@@ -11,9 +11,6 @@ namespace Source.Boot
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<SceneLoader>()
-                .AsSingle();
-
             Container.Bind<ISaveLoadService>()
                 .To<PlayerPrefsSaveLoadService>()
                 .AsSingle();
@@ -24,6 +21,12 @@ namespace Source.Boot
 
             Container.Bind<IPlayerService>()
                 .To<PlayerService>()
+                .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<LoginService>()
+                .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<SceneLoader>()
                 .AsSingle();
         }
     }

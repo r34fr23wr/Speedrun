@@ -4,8 +4,8 @@ namespace Source.Services.Score
 {
     public interface IScoreService
     {
-        int CurrentScore { get; }
-        void AddScore(int amount);
+        float CurrentScore { get; }
+        void SumbitScore(float amount);
         void Save();
         void Load();
     }

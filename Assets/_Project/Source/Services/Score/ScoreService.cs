@@ -2,16 +2,19 @@ using UnityEngine;
 using Zenject;
 using System;
 using Source.Services.SaveLoad;
+using Source.Services.Player;
+using LootLocker.Requests;
 
 namespace Source.Services.Score
 {
     public class ScoreService : IScoreService
     {
         private readonly ISaveLoadService _saveLoadService;
+        private readonly IPlayerService _playerService;
 
-        private int _currentScore;
+        private float _currentScore;
 
-        public int CurrentScore
+        public float CurrentScore
         {
             get => _currentScore;
             set
@@ -25,14 +28,29 @@ namespace Source.Services.Score
         }
 
         [Inject]
-        public ScoreService(ISaveLoadService saveLoadService)
+        public ScoreService(ISaveLoadService saveLoadService, IPlayerService playerService)
         {
             _saveLoadService = saveLoadService;
+            _playerService = playerService;
         }
 
-        public void AddScore(int amount)
+        public void SumbitScore(float scoreToUpload)
         {
-            CurrentScore += amount;
+            CurrentScore = scoreToUpload;
+            string playerID = _playerService.CurrentPlayerId;
+
+            LootLockerSDKManager.SubmitScore(playerID, (int)CurrentScore, Consts.LEADER_BOARD_KEY, (response) =>
+            {
+                if(!response.success)
+                {
+                    Debug.Log("Could not submit score!");
+                    Debug.Log(response.errorData.ToString());
+
+                    return;
+                }
+  
+                Debug.Log("Successfully uploaded score");
+            });
         }
 
         public void Save()
