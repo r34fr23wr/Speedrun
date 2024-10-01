@@ -2,12 +2,9 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using LootLocker.Requests;
 
-public class MainMenuEntryPoint : MonoBehaviour
+namespace Source.MainMenu
 {
-    [SerializeField] private LeaderBoardView _leaderBoardView;
-
-    private void Start()
+    public class MainMenuEntryPoint : MonoBehaviour
     {
-        _leaderBoardView.FetchTopHighscoresRoutine();
     }
 }

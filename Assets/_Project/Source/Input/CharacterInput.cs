@@ -115,6 +115,34 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""SceneReloading"",
+            ""id"": ""f92fe6f2-2825-4d7e-a870-4cd4bc20078b"",
+            ""actions"": [
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""9f9eb406-5a7e-4798-92db-05ef9928b3ef"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1cd53c1c-57cf-4aa9-ad52-92ca1b0d7871"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -123,11 +151,15 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
         m_Movement_Jump = m_Movement.FindAction("Jump", throwIfNotFound: true);
+        // SceneReloading
+        m_SceneReloading = asset.FindActionMap("SceneReloading", throwIfNotFound: true);
+        m_SceneReloading_Reload = m_SceneReloading.FindAction("Reload", throwIfNotFound: true);
     }
 
     ~@CharacterInput()
     {
         Debug.Assert(!m_Movement.enabled, "This will cause a leak and performance issues, CharacterInput.Movement.Disable() has not been called.");
+        Debug.Assert(!m_SceneReloading.enabled, "This will cause a leak and performance issues, CharacterInput.SceneReloading.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -239,9 +271,59 @@ public partial class @CharacterInput: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // SceneReloading
+    private readonly InputActionMap m_SceneReloading;
+    private List<ISceneReloadingActions> m_SceneReloadingActionsCallbackInterfaces = new List<ISceneReloadingActions>();
+    private readonly InputAction m_SceneReloading_Reload;
+    public struct SceneReloadingActions
+    {
+        private @CharacterInput m_Wrapper;
+        public SceneReloadingActions(@CharacterInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Reload => m_Wrapper.m_SceneReloading_Reload;
+        public InputActionMap Get() { return m_Wrapper.m_SceneReloading; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(SceneReloadingActions set) { return set.Get(); }
+        public void AddCallbacks(ISceneReloadingActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SceneReloadingActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SceneReloadingActionsCallbackInterfaces.Add(instance);
+            @Reload.started += instance.OnReload;
+            @Reload.performed += instance.OnReload;
+            @Reload.canceled += instance.OnReload;
+        }
+
+        private void UnregisterCallbacks(ISceneReloadingActions instance)
+        {
+            @Reload.started -= instance.OnReload;
+            @Reload.performed -= instance.OnReload;
+            @Reload.canceled -= instance.OnReload;
+        }
+
+        public void RemoveCallbacks(ISceneReloadingActions instance)
+        {
+            if (m_Wrapper.m_SceneReloadingActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ISceneReloadingActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SceneReloadingActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SceneReloadingActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public SceneReloadingActions @SceneReloading => new SceneReloadingActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface ISceneReloadingActions
+    {
+        void OnReload(InputAction.CallbackContext context);
     }
 }

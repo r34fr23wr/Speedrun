@@ -92,6 +92,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "SceneReloading",
+            "id": "f92fe6f2-2825-4d7e-a870-4cd4bc20078b",
+            "actions": [
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "9f9eb406-5a7e-4798-92db-05ef9928b3ef",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1cd53c1c-57cf-4aa9-ad52-92ca1b0d7871",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

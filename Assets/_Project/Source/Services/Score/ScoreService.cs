@@ -34,12 +34,14 @@ namespace Source.Services.Score
             _playerService = playerService;
         }
 
-        public void SumbitScore(float scoreToUpload)
+        public void SumbitScore(float scoreToUpload, LeaderBoardType leaderBoardType)
         {
             CurrentScore = scoreToUpload;
+
+            int convertedScore = (int)(CurrentScore * 1000f);
             string playerID = _playerService.CurrentPlayerId;
 
-            LootLockerSDKManager.SubmitScore(playerID, (int)CurrentScore, Consts.LEADER_BOARD_KEY, (response) =>
+            LootLockerSDKManager.SubmitScore(playerID, convertedScore, Consts.GetLeaderBoard(leaderBoardType), (response) =>
             {
                 if(!response.success)
                 {
